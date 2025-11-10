@@ -2,7 +2,11 @@
 
 Единая PostgreSQL база данных для хранения основных данных.
 
-**Примечание:** Wallet и Market сервисы имеют собственный кеш (Redis/in-memory) для данных из внешних API.
+**Примечание:**
+
+- Wallet и Market сервисы имеют собственный кеш (Redis/in-memory) для данных из внешних API
+- MCC (Merchant Category Code) - четырехзначный код категории из банковских транзакций
+- Budgets - пользователь указывает MCC и устанавливает лимит
 
 ## Основные таблицы
 
@@ -25,7 +29,7 @@ CREATE TABLE transactions (
     type VARCHAR(50) NOT NULL,
     amount BIGINT NOT NULL,
     currency VARCHAR(3) NOT NULL DEFAULT 'RUB',
-    category_id UUID,
+    mcc INTEGER,
     from_account_id UUID REFERENCES accounts(id),
     to_account_id UUID REFERENCES accounts(id),
     date TIMESTAMP NOT NULL,
@@ -35,19 +39,12 @@ CREATE TABLE transactions (
 
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_transactions_date ON transactions(date DESC);
-
-CREATE TABLE categories (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE INDEX idx_categories_user_id ON categories(user_id);
+CREATE INDEX idx_transactions_mcc ON transactions(mcc);
 
 CREATE TABLE budgets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
-    category_id UUID NOT NULL REFERENCES categories(id),
+    mcc INTEGER NOT NULL,
     limit_amount BIGINT NOT NULL,
     period VARCHAR(50) NOT NULL,
     spent_amount BIGINT NOT NULL DEFAULT 0,
@@ -55,6 +52,7 @@ CREATE TABLE budgets (
 );
 
 CREATE INDEX idx_budgets_user_id ON budgets(user_id);
+CREATE INDEX idx_budgets_mcc ON budgets(mcc);
 
 CREATE TABLE investment_positions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

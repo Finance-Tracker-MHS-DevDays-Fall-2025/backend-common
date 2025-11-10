@@ -10,23 +10,51 @@
 
 Агрегатор и API Gateway для фронтенда. Принимает HTTP запросы, вызывает другие сервисы по gRPC, агрегирует ответы.
 
+**Основная логика:**
+
+- Сохранение транзакций в БД
+- Управление бюджетами (по MCC кодам)
+- Агрегация данных из Wallet/Market
+- Работа с PostgreSQL
+
 **Порт:** 8080 (HTTP)
 
 ### 2. Wallet Service
 
-Прокси для внешних API банков (Т-Банк). Получает счета, транзакции через внешний API. Имеет собственный кеш (Redis/in-memory).
+Прокси для Т-Банк API. Только чтение данных из внешнего API.
+
+**Функции:**
+
+- Получение списка счетов из Т-Банк API
+- Получение истории транзакций за период
+- Получение инвестиционных позиций
+- Кеширование ответов (Redis/in-memory)
 
 **Порт:** 50051 (gRPC)
 
 ### 3. Market Service
 
-Прокси для рыночных данных. Получает информацию о ценных бумагах, цены, дивиденды через внешние API. Имеет собственный кеш (Redis/in-memory).
+Прокси для рыночных данных. Только чтение из внешних API.
+
+**Функции:**
+
+- Получение информации о ценных бумагах
+- Получение текущих цен
+- Получение информации о дивидендах
+- Кеширование ответов (Redis/in-memory)
 
 **Порт:** 50052 (gRPC)
 
 ### 4. Analyzer Service
 
-Аналитика транзакций, прогнозирование баланса. Может иметь свою дополнительную БД для кеша/ML моделей.
+Аналитика транзакций, прогнозирование баланса.
+
+**Функции:**
+
+- Чтение транзакций из PostgreSQL
+- Расчет статистики по категориям
+- Построение прогнозов
+- Может иметь свою БД
 
 **Порт:** 50053 (gRPC)
 
@@ -46,19 +74,19 @@ Frontend (HTTP) → Master Service (gRPC) → Wallet / Market / Analyzer / Notif
 
 ### 1. Ручной ввод транзакции
 
-Frontend → Master.CreateTransaction → Wallet.CreateTransaction
+Frontend → Master.CreateTransaction → Master сохраняет в БД
 
 ### 2. Просмотр баланса
 
-Frontend → Master.GetBalance → Wallet.ListAccounts + Market.CalculatePortfolioValue
+Frontend → Master.GetBalance → Wallet.GetAccounts (из Т-Банк API) → Master агрегирует и отдает
 
 ### 3. Аналитика по категориям
 
-Frontend → Master.GetAnalytics → Analyzer.GetStatistics → Wallet.ListTransactions
+Frontend → Master.GetAnalytics → Analyzer.GetStatistics (читает из БД) → Master отдает
 
 ### 4. Прогноз баланса
 
-Frontend → Master.GetForecast → Analyzer.GetForecast
+Frontend → Master.GetForecast → Analyzer.GetForecast (анализ данных из БД)
 
 ### 5. Уведомления
 
@@ -78,24 +106,23 @@ Scheduler → Notification.SendNotification
 **Таблицы:**
 
 - accounts - счета
-- transactions - транзакции
-- categories - категории пользователя
-- budgets - бюджеты пользователя
+- transactions - транзакции (с MCC кодами)
+- budgets - бюджеты по MCC кодам
 - investment_positions - инвестиционные позиции
-- securities - ценные бумаги
-- dividends - дивиденды
+- securities - справочник ценных бумаг
+- dividends - информация о дивидендах
 
 **Кеширование:**
 
 - **Wallet Service** - собственный кеш (Redis/in-memory) для данных из Т-Банк API
 - **Market Service** - собственный кеш (Redis/in-memory) для рыночных данных
 - **Master Service** - Redis для агрегированных данных
-- **Analyzer** - может иметь дополнительную БД для ML/расчетов
+- **Analyzer** - может иметь дополнительную БД
 
 ## Внешние API
 
 - **Т-Банк API** - счета, транзакции, инвестиции
-- **Рыночные данные** - цены ЦБ, дивиденды
+- **Т-Инвестиции API** - информация о ценных бумагах, дивиденды
 
 ## Денежные суммы
 
@@ -109,15 +136,3 @@ message Money {
   string currency = 2;   // "RUB"
 }
 ```
-
-## Развертывание
-
-Каждый сервис в отдельном репозитории:
-
-- `finance-tracker-master`
-- `finance-tracker-wallet`
-- `finance-tracker-market`
-- `finance-tracker-analyzer`
-- `finance-tracker-notification`
-
-Общие proto контракты в репозитории `finance-tracker-common`.
