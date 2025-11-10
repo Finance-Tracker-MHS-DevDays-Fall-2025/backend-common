@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package wallet;
+
+option go_package = "github.com/goomer125/finance-tracker/common/proto/wallet";
+
+import "google/protobuf/timestamp.proto";
+import "proto/common/common.proto";
+
+message Account {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+  common.AccountType type = 4;
+  common.Money balance = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message Transaction {
+  string id = 1;
+  string user_id = 2;
+  common.TransactionType type = 3;
+  common.Money amount = 4;
+  string category = 5;
+  string from_account_id = 6;
+  string to_account_id = 7;
+  google.protobuf.Timestamp date = 8;
+  string description = 9;
+}
+
+message InvestmentPosition {
+  string security_id = 1;
+  string ticker = 2;
+  int32 quantity = 3;
+  common.Money average_price = 4;
+}
+
+message GetAccountsRequest {
+  string user_id = 1;
+  string token = 2;
+}
+
+message GetAccountsResponse {
+  repeated Account accounts = 1;
+}
+
+message GetTransactionsRequest {
+  string user_id = 1;
+  string token = 2;
+  string account_id = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+}
+
+message GetTransactionsResponse {
+  repeated Transaction transactions = 1;
+}
+
+message GetInvestmentPositionsRequest {
+  string user_id = 1;
+  string token = 2;
+  string account_id = 3;
+}
+
+message GetInvestmentPositionsResponse {
+  repeated InvestmentPosition positions = 1;
+}
+
+service WalletService {
+  rpc GetAccounts(GetAccountsRequest) returns (GetAccountsResponse);
+  rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse);
+  rpc GetInvestmentPositions(GetInvestmentPositionsRequest) returns (GetInvestmentPositionsResponse);
+}

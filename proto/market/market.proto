@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package market;
+
+option go_package = "github.com/goomer125/finance-tracker/common/proto/market";
+
+import "google/protobuf/timestamp.proto";
+import "proto/common/common.proto";
+
+message Security {
+  string id = 1;
+  string ticker = 2;
+  string name = 3;
+  common.Money current_price = 4;
+  google.protobuf.Timestamp price_updated_at = 5;
+}
+
+message Dividend {
+  string id = 1;
+  string security_id = 2;
+  string ticker = 3;
+  common.Money amount_per_share = 4;
+  google.protobuf.Timestamp payment_date = 5;
+}
+
+message GetSecurityRequest {
+  string ticker = 1;
+}
+
+message GetSecurityResponse {
+  Security security = 1;
+}
+
+message GetSecuritiesPricesRequest {
+  repeated string tickers = 1;
+}
+
+message GetSecuritiesPricesResponse {
+  repeated Security securities = 1;
+}
+
+message GetDividendsRequest {
+  repeated string tickers = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+
+message GetDividendsResponse {
+  repeated Dividend dividends = 1;
+}
+
+service MarketService {
+  rpc GetSecurity(GetSecurityRequest) returns (GetSecurityResponse);
+  rpc GetSecuritiesPrices(GetSecuritiesPricesRequest) returns (GetSecuritiesPricesResponse);
+  rpc GetDividends(GetDividendsRequest) returns (GetDividendsResponse);
+}
