@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package master;
 
-option go_package = "github.com/goomer125/finance-tracker/common/proto/master";
+option go_package = "api-master";
 
 import "google/protobuf/timestamp.proto";
 import "proto/common/common.proto";
