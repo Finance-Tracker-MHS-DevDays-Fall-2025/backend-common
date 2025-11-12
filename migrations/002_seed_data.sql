@@ -1,38 +1,137 @@
 -- Migration: 002_seed_data
--- Description: Seed data for testing
+-- Description: Seed data for testing and development
 -- Database: master
 
--- Insert test user
 INSERT INTO users (id, login, password, created_at) 
 VALUES 
-    ('00000000-0000-0000-0000-000000000001', 'test_user', 'hashed_password', NOW())
+    ('11111111-1111-1111-1111-111111111111', 'test_user_1', '$2a$10$test.hash.1', NOW() - INTERVAL '180 days'),
+    ('22222222-2222-2222-2222-222222222222', 'test_user_2', '$2a$10$test.hash.2', NOW() - INTERVAL '90 days'),
+    ('33333333-3333-3333-3333-333333333333', 'test_user_3', '$2a$10$test.hash.3', NOW() - INTERVAL '30 days')
 ON CONFLICT (id) DO NOTHING;
 
--- Insert test accounts
 INSERT INTO accounts (id, user_id, name, type, balance, currency, created_at)
 VALUES
-    ('00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000001', 'Основной счет', 'REGULAR', 5000000, 'RUB', NOW()),
-    ('00000000-0000-0000-0000-000000000102', '00000000-0000-0000-0000-000000000001', 'Инвестиционный счет', 'INVESTMENT', 10000000, 'RUB', NOW())
+    ('a1111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'Основной счет', 'REGULAR', 125000000, 'RUB', NOW() - INTERVAL '180 days'),
+    ('a1111111-1111-1111-1111-111111111112', '11111111-1111-1111-1111-111111111111', 'Сберегательный', 'REGULAR', 500000000, 'RUB', NOW() - INTERVAL '150 days'),
+    ('a1111111-1111-1111-1111-111111111113', '11111111-1111-1111-1111-111111111111', 'ИИС', 'INVESTMENT', 1000000000, 'RUB', NOW() - INTERVAL '180 days'),
+    ('a2222222-2222-2222-2222-222222222221', '22222222-2222-2222-2222-222222222222', 'Зарплатная карта', 'REGULAR', 45000000, 'RUB', NOW() - INTERVAL '90 days'),
+    ('a2222222-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222', 'Брокерский счет', 'INVESTMENT', 300000000, 'RUB', NOW() - INTERVAL '90 days'),
+    ('a3333333-3333-3333-3333-333333333331', '33333333-3333-3333-3333-333333333333', 'Личный счет', 'REGULAR', 15000000, 'RUB', NOW() - INTERVAL '30 days')
 ON CONFLICT (id) DO NOTHING;
 
--- Insert test transactions
-INSERT INTO transactions (id, account_id, type, amount, currency, mcc, description, created_at)
+INSERT INTO transactions (account_id, type, amount, currency, mcc, description, created_at)
 VALUES
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000101', 'INCOME', 15000000, 'RUB', NULL, 'Зарплата', NOW() - INTERVAL '30 days'),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000101', 'EXPENSE', 5000000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '25 days'),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000101', 'EXPENSE', 3000000, 'RUB', 5812, 'Ресторан', NOW() - INTERVAL '20 days'),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000101', 'EXPENSE', 2000000, 'RUB', 4121, 'Такси', NOW() - INTERVAL '15 days'),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000101', 'INCOME', 15000000, 'RUB', NULL, 'Зарплата', NOW() - INTERVAL '60 days'),
-    (gen_random_uuid(), '00000000-0000-0000-0000-000000000101', 'EXPENSE', 4500000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '55 days')
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 18000000, 'RUB', NULL, 'Зарплата январь', NOW() - INTERVAL '150 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 4500000, 'RUB', 5411, 'Продукты Пятерочка', NOW() - INTERVAL '148 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 800000, 'RUB', 5812, 'Кофе с коллегами', NOW() - INTERVAL '147 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 3500000, 'RUB', 5541, 'АЗС Лукойл', NOW() - INTERVAL '145 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 1200000, 'RUB', 5999, 'Ozon покупки', NOW() - INTERVAL '143 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 2500000, 'RUB', 5812, 'Ресторан на ДР', NOW() - INTERVAL '140 days'),
+
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 18000000, 'RUB', NULL, 'Зарплата февраль', NOW() - INTERVAL '120 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 4800000, 'RUB', 5411, 'Продукты Магнит', NOW() - INTERVAL '118 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 950000, 'RUB', 5812, 'Кафе', NOW() - INTERVAL '115 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 3200000, 'RUB', 5541, 'Бензин', NOW() - INTERVAL '112 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 15000000, 'RUB', 4121, 'Авиабилеты', NOW() - INTERVAL '110 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 25000000, 'RUB', 7011, 'Отель в Турции', NOW() - INTERVAL '108 days'),
+
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 18000000, 'RUB', NULL, 'Зарплата март', NOW() - INTERVAL '90 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 5000000, 'RUB', NULL, 'Премия', NOW() - INTERVAL '90 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 4200000, 'RUB', 5411, 'Продукты Перекресток', NOW() - INTERVAL '88 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 750000, 'RUB', 5812, 'Бизнес-ланч', NOW() - INTERVAL '85 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 3800000, 'RUB', 5541, 'АЗС', NOW() - INTERVAL '82 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 8500000, 'RUB', 5732, 'М.Видео телефон', NOW() - INTERVAL '80 days'),
+
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 18000000, 'RUB', NULL, 'Зарплата апрель', NOW() - INTERVAL '60 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 4600000, 'RUB', 5411, 'Продукты ВкусВилл', NOW() - INTERVAL '58 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 1100000, 'RUB', 5812, 'Кафе выходной', NOW() - INTERVAL '55 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 3300000, 'RUB', 5541, 'Бензин', NOW() - INTERVAL '52 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 1800000, 'RUB', 5999, 'Wildberries', NOW() - INTERVAL '50 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 5000000, 'RUB', 4812, 'Связь и интернет', NOW() - INTERVAL '48 days'),
+
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 18000000, 'RUB', NULL, 'Зарплата май', NOW() - INTERVAL '30 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 5100000, 'RUB', 5411, 'Продукты Ашан', NOW() - INTERVAL '28 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 1300000, 'RUB', 5812, 'Рестораны', NOW() - INTERVAL '25 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 3500000, 'RUB', 5541, 'АЗС Роснефть', NOW() - INTERVAL '22 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 2200000, 'RUB', 7832, 'Кинотеатр', NOW() - INTERVAL '20 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 6500000, 'RUB', 5311, 'Leroy Merlin ремонт', NOW() - INTERVAL '18 days'),
+
+    ('a1111111-1111-1111-1111-111111111111', 'INCOME', 18000000, 'RUB', NULL, 'Зарплата июнь', NOW() - INTERVAL '5 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 3800000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '3 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 900000, 'RUB', 5812, 'Кафе', NOW() - INTERVAL '2 days'),
+    ('a1111111-1111-1111-1111-111111111111', 'EXPENSE', 2800000, 'RUB', 5541, 'Бензин', NOW() - INTERVAL '1 days'),
+
+    ('a2222222-2222-2222-2222-222222222221', 'INCOME', 12000000, 'RUB', NULL, 'Зарплата март', NOW() - INTERVAL '90 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 3500000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '88 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 2000000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '85 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 1500000, 'RUB', 5812, 'Еда вне дома', NOW() - INTERVAL '82 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 4500000, 'RUB', 4121, 'Такси и транспорт', NOW() - INTERVAL '80 days'),
+
+    ('a2222222-2222-2222-2222-222222222221', 'INCOME', 12000000, 'RUB', NULL, 'Зарплата апрель', NOW() - INTERVAL '60 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 3200000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '58 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 1800000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '55 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 2500000, 'RUB', 5812, 'Кафе рестораны', NOW() - INTERVAL '52 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 5000000, 'RUB', 5999, 'Онлайн покупки', NOW() - INTERVAL '50 days'),
+
+    ('a2222222-2222-2222-2222-222222222221', 'INCOME', 12000000, 'RUB', NULL, 'Зарплата май', NOW() - INTERVAL '30 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 3800000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '28 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 2200000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '25 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 1600000, 'RUB', 5812, 'Рестораны', NOW() - INTERVAL '22 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 3500000, 'RUB', 4121, 'Транспорт', NOW() - INTERVAL '20 days'),
+
+    ('a2222222-2222-2222-2222-222222222221', 'INCOME', 12000000, 'RUB', NULL, 'Зарплата июнь', NOW() - INTERVAL '5 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 2500000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '3 days'),
+    ('a2222222-2222-2222-2222-222222222221', 'EXPENSE', 1200000, 'RUB', 5812, 'Кафе', NOW() - INTERVAL '2 days'),
+
+    ('a3333333-3333-3333-3333-333333333331', 'INCOME', 8000000, 'RUB', NULL, 'Фриланс проект', NOW() - INTERVAL '25 days'),
+    ('a3333333-3333-3333-3333-333333333331', 'EXPENSE', 2000000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '23 days'),
+    ('a3333333-3333-3333-3333-333333333331', 'EXPENSE', 1500000, 'RUB', 5812, 'Кафе', NOW() - INTERVAL '20 days'),
+    ('a3333333-3333-3333-3333-333333333331', 'EXPENSE', 500000, 'RUB', 4121, 'Такси', NOW() - INTERVAL '18 days'),
+    ('a3333333-3333-3333-3333-333333333331', 'INCOME', 10000000, 'RUB', NULL, 'Фриланс проект 2', NOW() - INTERVAL '5 days'),
+    ('a3333333-3333-3333-3333-333333333331', 'EXPENSE', 2500000, 'RUB', 5411, 'Продукты', NOW() - INTERVAL '3 days'),
+    ('a3333333-3333-3333-3333-333333333331', 'EXPENSE', 800000, 'RUB', 5812, 'Ресторан', NOW() - INTERVAL '1 days')
 ON CONFLICT (id) DO NOTHING;
 
--- Insert test securities
-INSERT INTO securities (figi, ticker, name, type, current_price, created_at)
+INSERT INTO securities (figi, ticker, name, type, current_price, price_updated_at, created_at)
 VALUES
-    ('BBG004730N88', 'SBER', 'Сбербанк', 'STOCK', 27000, NOW()),
-    ('BBG004731354', 'GAZP', 'Газпром', 'STOCK', 15000, NOW()),
-    ('BBG004730ZJ9', 'YNDX', 'Яндекс', 'STOCK', 350000, NOW())
+    ('BBG004730N88', 'SBER', 'ПАО Сбербанк', 'STOCK', 27350, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004731354', 'GAZP', 'ПАО Газпром', 'STOCK', 15420, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004730ZJ9', 'YNDX', 'Яндекс', 'STOCK', 358000, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004731032', 'GMKN', 'ГМК Норникель', 'STOCK', 1685000, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG0047315Y7', 'ROSN', 'НК Роснефть', 'STOCK', 56800, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004730RP0', 'LKOH', 'ЛУКОЙЛ', 'STOCK', 678000, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004S681W4', 'IRAO', 'Интер РАО ЕЭС', 'STOCK', 550, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004S68614', 'VTBR', 'Банк ВТБ', 'STOCK', 8520, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004731489', 'NVTK', 'НОВАТЭК', 'STOCK', 126000, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG004RVFCY3', 'MGNT', 'Магнит', 'STOCK', 579000, NOW(), NOW() - INTERVAL '180 days'),
+    ('RU000A101QV4', 'ОФЗ-26234', 'ОФЗ 26234', 'BOND', 98500, NOW(), NOW() - INTERVAL '180 days'),
+    ('RU000A1025V3', 'ОФЗ-26233', 'ОФЗ 26233', 'BOND', 99200, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG222222222', 'FXRB', 'FinEx Russian RTS Equity UCITS ETF', 'ETF', 275000, NOW(), NOW() - INTERVAL '180 days'),
+    ('BBG333333333', 'SBGB', 'Sberbank CIB Gov Bond', 'ETF', 102500, NOW(), NOW() - INTERVAL '180 days')
 ON CONFLICT (figi) DO NOTHING;
 
-COMMENT ON SCHEMA public IS 'Test data loaded for development';
+INSERT INTO investment_positions (account_id, security_id, quantity, created_at, updated_at)
+VALUES
+    ('a1111111-1111-1111-1111-111111111113', 'BBG004730N88', 100, NOW() - INTERVAL '180 days', NOW()),
+    ('a1111111-1111-1111-1111-111111111113', 'BBG004731354', 50, NOW() - INTERVAL '170 days', NOW()),
+    ('a1111111-1111-1111-1111-111111111113', 'BBG004730ZJ9', 20, NOW() - INTERVAL '160 days', NOW()),
+    ('a1111111-1111-1111-1111-111111111113', 'BBG004731032', 10, NOW() - INTERVAL '150 days', NOW()),
+    ('a1111111-1111-1111-1111-111111111113', 'RU000A101QV4', 30, NOW() - INTERVAL '140 days', NOW()),
+    ('a2222222-2222-2222-2222-222222222222', 'BBG004730N88', 50, NOW() - INTERVAL '90 days', NOW()),
+    ('a2222222-2222-2222-2222-222222222222', 'BBG222222222', 10, NOW() - INTERVAL '85 days', NOW()),
+    ('a2222222-2222-2222-2222-222222222222', 'BBG333333333', 20, NOW() - INTERVAL '80 days', NOW())
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO securities_payments (security_id, amount_per_share, payment_date, created_at)
+VALUES
+    ('BBG004730N88', 2500, NOW() - INTERVAL '60 days', NOW() - INTERVAL '65 days'),
+    ('BBG004730N88', 2300, NOW() - INTERVAL '150 days', NOW() - INTERVAL '155 days'),
+    ('BBG004731354', 1800, NOW() - INTERVAL '45 days', NOW() - INTERVAL '50 days'),
+    ('BBG004731354', 1750, NOW() - INTERVAL '135 days', NOW() - INTERVAL '140 days'),
+    ('BBG004730ZJ9', 0, NOW() - INTERVAL '365 days', NOW() - INTERVAL '370 days'),
+    ('BBG004731032', 15000, NOW() - INTERVAL '30 days', NOW() - INTERVAL '35 days'),
+    ('BBG004731032', 14500, NOW() - INTERVAL '120 days', NOW() - INTERVAL '125 days'),
+    ('RU000A101QV4', 4200, NOW() - INTERVAL '90 days', NOW() - INTERVAL '95 days'),
+    ('RU000A101QV4', 4150, NOW() - INTERVAL '180 days', NOW() - INTERVAL '185 days')
+ON CONFLICT (id) DO NOTHING;
 
