@@ -4,6 +4,7 @@ package master;
 
 option go_package = "api-master";
 
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "proto/common/common.proto";
 import "proto/wallet/wallet.proto";
@@ -54,8 +55,30 @@ message GetForecastResponse {
 }
 
 service MasterService {
-  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
-  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
-  rpc GetAnalytics(GetAnalyticsRequest) returns (GetAnalyticsResponse);
-  rpc GetForecast(GetForecastRequest) returns (GetForecastResponse);
+  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse) {
+    option (google.api.http) = {
+      post: "/v1/transactions"
+      body: "*"
+    };
+  };
+
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/balance"
+    };
+  };
+
+  rpc GetAnalytics(GetAnalyticsRequest) returns (GetAnalyticsResponse) {
+    option (google.api.http) = {
+      post: "/v1/analytics"
+      body: "*"
+    };
+  };
+
+  rpc GetForecast(GetForecastRequest) returns (GetForecastResponse) {
+    option (google.api.http) = {
+      post: "/v1/forecast"
+      body: "*"
+    };
+  };
 }
