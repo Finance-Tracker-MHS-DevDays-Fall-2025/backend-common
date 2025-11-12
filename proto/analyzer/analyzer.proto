@@ -53,7 +53,24 @@ message GetForecastResponse {
   repeated Forecast forecasts = 1;
 }
 
+message GetAnomaliesRequest {
+  string user_id = 1;
+  common.TimePeriod period = 2;
+}
+
+message GetAnomaliesResponse {
+  repeated CategoryAnomaly anomalies = 1;
+}
+
+message CategoryAnomaly {
+  string mcc = 1;
+  common.Money actual_amount = 2;
+  common.Money expected_amount = 3;
+  common.Money deviation_amount = 4;
+}
+
 service AnalyzerService {
   rpc GetStatistics(GetStatisticsRequest) returns (GetStatisticsResponse);
   rpc GetForecast(GetForecastRequest) returns (GetForecastResponse);
+  rpc GetAnomalies(GetAnomaliesRequest) returns (GetAnomaliesResponse);
 }
