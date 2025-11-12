@@ -1,9 +1,10 @@
 -- Migration: 001_init_schema
 -- Description: Initial database schema for finance tracker
 -- Database: master
+-- Apply order: Run this file first before any other migrations
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Note: Using gen_random_uuid() - built-in function in PostgreSQL 13+
+-- No extension required
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (

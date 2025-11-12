@@ -100,7 +100,7 @@ CREATE INDEX idx_dividends_security_id ON dividends(security_id);
 CREATE INDEX idx_dividends_payment_date ON dividends(payment_date);
 ```
 
-## Дополнительная БД для Analyzer (опционально)
+<!-- ## Дополнительная БД для Analyzer (опционально)
 
 Если нужно кешировать тяжелые расчеты или хранить ML модели:
 
@@ -118,7 +118,7 @@ CREATE INDEX idx_analytics_cache_user_key ON analytics_cache(user_id, cache_key)
 CREATE INDEX idx_analytics_cache_expires ON analytics_cache(expires_at);
 ```
 
-## Замечания
+## Замечания -->
 
 - Все суммы в BIGINT (копейки): 100.00 руб = 10000
 - UUID для всех ID
