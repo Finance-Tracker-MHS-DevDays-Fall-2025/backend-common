@@ -5,7 +5,7 @@ package analyzer;
 option go_package = "api-analyzer";
 
 import "google/protobuf/timestamp.proto";
-import "proto/common/common.proto";
+import "common/common.proto";
 
 message PeriodBalance {
   google.protobuf.Timestamp period_start = 1;

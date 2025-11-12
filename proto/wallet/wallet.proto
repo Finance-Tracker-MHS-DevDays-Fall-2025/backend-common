@@ -5,7 +5,7 @@ package wallet;
 option go_package = "api-wallet";
 
 import "google/protobuf/timestamp.proto";
-import "proto/common/common.proto";
+import "common/common.proto";
 
 message Account {
   string account_id = 1;

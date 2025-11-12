@@ -6,9 +6,9 @@ option go_package = "api-master";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
-import "proto/common/common.proto";
-import "proto/wallet/wallet.proto";
-import "proto/analyzer/analyzer.proto";
+import "common/common.proto";
+import "wallet/wallet.proto";
+import "analyzer/analyzer.proto";
 
 message CreateTransactionRequest {
   string user_id = 1;

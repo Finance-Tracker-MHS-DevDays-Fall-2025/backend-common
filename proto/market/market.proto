@@ -5,7 +5,7 @@ package market;
 option go_package = "api-market";
 
 import "google/protobuf/timestamp.proto";
-import "proto/common/common.proto";
+import "common/common.proto";
 
 message InvestmentPosition {
   string figi = 1;

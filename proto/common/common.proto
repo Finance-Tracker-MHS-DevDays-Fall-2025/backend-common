@@ -36,4 +36,3 @@ enum TimePeriod {
   TIME_PERIOD_QUARTER = 2;
   TIME_PERIOD_YEAR = 3;
 }
-
