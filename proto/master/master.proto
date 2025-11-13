@@ -25,6 +25,14 @@ message CreateTransactionResponse {
   wallet.Transaction transaction = 1;
 }
 
+message GetTransactionsRequest {
+  string user_id = 1;
+}
+
+message GetTransactionsResponse {
+  repeated wallet.Transaction transactions = 1;
+}
+
 message GetBalanceRequest {
   string user_id = 1;
 }
@@ -61,6 +69,12 @@ service MasterService {
       body: "*"
     };
   };
+
+  rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/users/{user_id}/transactions"
+    };
+  }
 
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
     option (google.api.http) = {
