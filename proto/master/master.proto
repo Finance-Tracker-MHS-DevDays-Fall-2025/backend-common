@@ -57,7 +57,7 @@ message GetForecastResponse {
 service MasterService {
   rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse) {
     option (google.api.http) = {
-      post: "/v1/transactions"
+      post: "/transactions"
       body: "*"
     };
   };
