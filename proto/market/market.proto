@@ -19,6 +19,7 @@ message Security {
   string name = 3;
   common.Money current_price = 4;
   google.protobuf.Timestamp price_updated_at = 5;
+  string type = 6;
 }
 
 message SecurityPayment {
