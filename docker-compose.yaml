@@ -1,0 +1,221 @@
+services:
+  wallet:
+    image: cr.yandex/crpkimlhn85fg9vjfj7l/wallet:latest
+    hostname: wallet
+    ports:
+      - "50052:50051"
+    networks:
+      - default
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          pids: 25
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: any
+        delay: 15s
+      update_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+  
+  market:
+    image: cr.yandex/crpkimlhn85fg9vjfj7l/market:latest
+    hostname: market
+    ports:
+      - "50053:50051"
+    networks:
+      - default
+    environment:
+      SANDBOX_TOKEN: ${SANDBOX_TOKEN}
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          pids: 25
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: any
+        delay: 15s
+      update_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+
+  analyzer:
+    image: cr.yandex/crpkimlhn85fg9vjfj7l/analyzer:latest
+    hostname: analyzer
+    ports:
+      - "50054:50051"
+      - "8081:8080"
+    networks:
+      - default
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SSLMODE: ${DB_SSLMODE}
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          pids: 25
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: any
+        delay: 15s
+      update_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+
+  master:
+    image: cr.yandex/crpkimlhn85fg9vjfj7l/master:latest
+    hostname: master
+    depends_on:
+      wallet:
+        condition: service_started
+      market:
+        condition: service_started
+      analyzer:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+    environment:
+      PG_HOST: ${PG_HOST}
+      PG_PORT: ${PG_PORT}
+      PG_DB: ${PG_DB}
+      PG_USER: ${PG_USER}
+      PG_PASS: ${PG_PASS}
+
+      SERVER_HOST: ${SERVER_HOST}
+      GRPC_PORT: ${GRPC_PORT}
+      HTTP_PORT: ${HTTP_PORT}
+
+      ANALYZER_URL: ${ANALYZER_URL}
+      MARKET_URL: ${MARKET_URL}
+      WALLET_URL: ${WALLET_URL}
+      NOTIFICATION_URL: ${NOTIFICATION_URL}
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          pids: 25
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: any
+        delay: 15s
+      update_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+
+  notification:
+    image: cr.yandex/crpkimlhn85fg9vjfj7l/notification:latest
+    hostname: notification
+    ports:
+      - "50055:50051"
+      - "5001:5001"
+    networks:
+      - default
+    volumes:
+      - /hahaton/.data/yc/root.crt:/etc/ssl/certs/yc/root.crt:ro
+    environment:
+      APP_MODE: ${APP_MODE}
+
+      HTTP_SERVER_PORT: ${NOTIFICATION_HTTP_SERVER_PORT}
+      GRPC_SERVER_PORT: ${NOTIFICATION_GRPC_SERVER_PORT}
+
+      KAFKA_USERNAME: ${KAFKA_USERNAME}
+      KAFKA_PASSWORD: ${KAFKA_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
+      KAFKA_SSL_ROOT_CERT: ${KAFKA_SSL_ROOT_CERT}
+
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN}
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          pids: 25
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: any
+        delay: 15s
+      update_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        monitor: 10s
+        delay: 5s
+        order: start-first
+        failure_action: rollback
+
+networks:
+  default:
+    driver: bridge
